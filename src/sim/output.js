@@ -1,5 +1,8 @@
-// Định dạng output JSONL theo Test Contract v1.1.
+// Định dạng output JSONL theo Test Contract v1.2.
 import { TICK_RATE } from './tuning.js';
+import { capacityOf } from './game.js';
+
+const fuel1 = (u) => Math.round((u / TICK_RATE) * 10) / 10 + 0;
 
 const r3 = (v) => Math.round(v * 1000) / 1000 + 0; // +0: bỏ -0
 const pos3 = (p) => p.map(r3);
@@ -26,8 +29,12 @@ export function snapshotLine(s) {
       charm_s: sec(p.charm),
       flames: p.flames,
       carried: p.carried,
+      capacity: capacityOf(p),
     },
-    lanterns: s.lanterns.map((l) => ({ id: l.id, pos: pos3(l.pos), lit: l.lit, deposited: l.deposited })),
+    lanterns: s.lanterns.map((l) => ({
+      id: l.id, pos: pos3(l.pos), lit: l.lit, deposited: l.deposited,
+      fuel: l.lit ? fuel1(l.fuel) : 0, ever_lit: l.ever_lit, relit_count: l.relit_count,
+    })),
     shades: s.shades.map((sh) => ({ id: sh.id, pos: pos3(sh.pos), state: sh.state })),
     motes_active: s.motes.length,
     motes: s.motes.map((m) => ({ id: m.id, pos: pos3(m.pos), kind: m.kind, ttl_s: m.ttl == null ? null : sec(m.ttl) })),
