@@ -9,7 +9,8 @@ const L1 = (extra) => ({ id: 'L1', pos: [0, 0, 0], ...extra });
 
 test('P3-01 contract v1.2: khóa tuning mới và thời lượng 240/270/300', () => {
   const c = JSON.parse(readFileSync('game.contract.json', 'utf8'));
-  assert.equal(c.contract_version, '1.2');
+  // [Phase 4 sửa] contract lên 1.3 (Ticket-04: "mọi yêu cầu của v1.0–v1.2 vẫn giữ nguyên") → kiểm phiên bản ở P4-01.
+  assert.ok(['1.2', '1.3'].includes(c.contract_version));
   const t = c.tuning;
   assert.deepEqual(
     [t.fuel_max, t.fuel_decay_per_s, t.fuel_per_mote, t.relight_cost, t.win_ratio, t.drain_per_s, t.low_fuel_threshold, t.capacity_max],

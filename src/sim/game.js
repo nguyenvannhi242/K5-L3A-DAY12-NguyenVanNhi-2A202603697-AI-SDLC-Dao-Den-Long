@@ -275,7 +275,7 @@ function step(g, input = {}) {
   for (const c of g.charms) if (!c.available && c.respawn > 0 && --c.respawn === 0) c.available = true;
   if (g.wind.active > 0) g.wind.active--;
   // Ticket-03: trừ dầu (hao + bị hút); ngay sau đó đèn hết dầu tắt.
-  for (const l of g.lanterns) if (l.lit) l.fuel -= FUEL_DECAY;
+  if (!g.bench) for (const l of g.lanterns) if (l.lit) l.fuel -= FUEL_DECAY; // bench: tắt hao dầu
   for (const s of g.shades) {
     if (s.state !== 'drain' || s.evict > 0) continue;
     const l = g.lanterns.find((x) => x.id === s.target);
@@ -297,7 +297,7 @@ function step(g, input = {}) {
   movePlayer(g, input, pressed);
   const active = p.fall_wait === 0;
   // 4. Nhặt đom đóm và bùa.
-  if (active) pickup(g);
+  if (active && !g.bench) pickup(g); // bench: tắt nhặt đom đóm
   // 5. Tương tác với đèn. 6. Vùng an toàn (cập nhật ngay khi đèn sáng).
   if (active && pressed.interact) interact(g);
   // 7. Tỏa Sáng.
@@ -307,13 +307,15 @@ function step(g, input = {}) {
   moveDrifters(g);
   // 9. Chạm: Gió Lạc cướp trước, rồi Bóng Mực.
   if (active) {
-    steals(g);
-    hits(g);
+    if (!g.bench) {
+      steals(g);
+      hits(g); // bench: tắt sát thương
+    }
   }
   // 10. Sinh theo lịch.
-  spawn(g);
+  if (!g.bench) spawn(g); // bench: tắt sinh thêm thực thể
   // 11. Thắng/thua.
-  checkEnd(g);
+  if (!g.bench) checkEnd(g); // bench: tắt điều kiện kết thúc Đêm
 }
 
 export function normalizeMove(move) {
@@ -783,4 +785,36 @@ export function windWarning(g) {
   if (!g.wind_enabled || g.wind.active > 0) return 0;
   const left = R.wind_every - (g.sim_tick % R.wind_every);
   return left <= R.wind_warn_ticks ? left : 0;
+}
+
+// ---------- Ticket-04: cảnh benchmark chuẩn ----------
+// Đêm 1, đúng 200 Bóng Mực wander rải đều trên đảo và đúng 100 đom đóm (theo seed), L1–L3 sáng fuel 100.
+// Tắt: sinh thêm, sát thương, nhặt, hao dầu, kết thúc Đêm. Bóng Mực vẫn đi theo luật wander.
+export const BENCH = { shades: 200, motes: 100, island_r: 39 };
+export function createBenchGame(seed = 42) {
+  const game = createGame({
+    seed,
+    night: 1,
+    scenario: {
+      random_motes: false,
+      random_shades: false,
+      motes: [],
+      shades: [],
+      lanterns: ['L1', 'L2', 'L3'].map((id) => ({ id, lit: true, fuel: T.fuel_max })),
+    },
+  });
+  const g = game.state;
+  g.bench = true;
+  const disc = () => {
+    const r = BENCH.island_r * Math.sqrt(g.rng.next());
+    const a = g.rng.next() * Math.PI * 2;
+    return [r * Math.cos(a), 0, r * Math.sin(a)];
+  };
+  for (let i = 0; i < BENCH.shades; i++) {
+    const pos = disc();
+    pos[1] = R.shade_hover_y;
+    g.shades.push(newShade(`S${g.next_shade++}`, pos, 'wander'));
+  }
+  for (let i = 0; i < BENCH.motes; i++) addMote(g, disc(), 'random');
+  return game;
 }
