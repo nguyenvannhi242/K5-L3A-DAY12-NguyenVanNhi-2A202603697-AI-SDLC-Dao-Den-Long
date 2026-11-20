@@ -44,3 +44,18 @@ Ticket-02 làm rõ/thay các giả định A1, A2, A9, A11, A13, A15 (đã khớ
 | B13 | Sinh Gió Lạc | Ở một điểm sinh Bóng Mực ngẫu nhiên (theo seed); không cần cách xa Mây | |
 | B14 | Scenario `charms` | `{id, pos?, available?, respawn_ticks? | respawn_s?}`; id mặc định của Đêm thì được bỏ `pos` | |
 | B15 | Scenario `drifters` | `{id?, pos, state?, stolen?, state_ticks_left?}`; `state_ticks_left` của `flee` = tick biến mất | |
+
+## Phase 3 (Ticket-03, contract v1.2)
+
+Ticket-03 thay A13/A14 (luật thắng, điểm) và thời lượng Đêm. Giả định mới:
+
+| # | Chỗ mơ hồ | Giả định | Ghi chú |
+|---|---|---|---|
+| C1 | Khóa điểm trong `tuning.score` | Giữ 5 khóa cũ (`per_mote` 5, `per_second_left` 0) và thêm `per_relight` 40, `per_stun_draining` 15, `per_lit_lantern_dawn` 50 | Ticket không liệt kê khóa điểm mới |
+| C2 | `refuel.amount` | Số đom đóm dùng (`used`); `refuel.fuel` là dầu sau khi châm (1 chữ số) | |
+| C3 | "Đèn đầy dầu không được chọn" | Bước 2 trừ dầu trước bước 5, nên đèn chỉ đầy đúng 100 trong tick vừa châm/thắp; khi đó không được chọn | Theo đúng thứ tự tick |
+| C4 | `fuel_drain` | Mỗi Bóng Mực ghi riêng sau mỗi 60 tick hút liên tục (tick hút thứ 60, 120…); bộ đếm về 0 khi rời `drain` | |
+| C5 | Bóng `drain` | Đứng yên, không gây sát thương (chỉ wander/chase gây sát thương); chuyển `chase` khi Mây ≤ 6 m | |
+| C6 | Scenario `drain` thiếu `target_lantern_id` | Lấy đèn sáng gần nhất | |
+| C7 | Scenario `lit:true` | Luôn `ever_lit = true`; thiếu `fuel` → 100; `lit:false` → fuel 0 | Ticket: "lit:true mà không có fuel → 100" |
+| C8 | Dầu khi thắng | `floor(fuel)` theo dầu tại tick bình minh (sau khi trừ dầu của tick đó) | |

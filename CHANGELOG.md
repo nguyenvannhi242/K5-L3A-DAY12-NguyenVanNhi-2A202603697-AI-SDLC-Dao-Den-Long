@@ -1,5 +1,19 @@
 # Changelog
 
+## [Phase 3] — Ticket-03 "Đèn cạn dầu" · contract v1.2 · tag `phase-3`
+### Thay đổi phá vỡ tương thích (breaking changes)
+- **Luật thắng:** bỏ thắng sớm `all_lit`; thắng `dawn_survived` khi còn sống lúc hết giờ và số đèn đang sáng ≥ ceil(0.6 × tổng). `game_over.reason` không còn `all_lit`.
+- **Thời lượng Đêm:** 300/330/360 → **240/270/300 s**.
+- **Đèn:** đèn sáng hao dầu và có thể tắt (`lantern_out`); đèn sáng nhận thêm đom đóm (châm dầu, `refuel`). Vùng an toàn chỉ còn khi `fuel ≥ 30`.
+- **Điểm:** thay toàn bộ công thức (+5/đom đóm, +40 thắp lại, +15 Tỏa Sáng bóng đang hút, điểm bình minh theo đèn sáng + dầu); **bỏ thưởng thời gian** (`per_second_left` = 0).
+- **Sức chứa** không cố định 10 nữa: 10 + 2 × lần thắp thành công, tối đa 20.
+- **Contract 1.1 → 1.2:** tuning thêm `fuel_max, fuel_decay_per_s, fuel_per_mote, relight_cost, win_ratio, drain_per_s, low_fuel_threshold, capacity_max` (+ khóa điểm mới); `lantern_lit` thêm `relight`; snapshot đèn thêm `fuel/ever_lit/relit_count`, player thêm `capacity`; Bóng Mực thêm trạng thái `drain`; sự kiện mới `refuel`, `lantern_out`, `fuel_drain`.
+### Thêm
+- Bóng Mực hút dầu đèn yếu; chế độ "Bảng màu dễ phân biệt"; thanh dầu + nhấp nháy 1 Hz; đèn tắt xẹp và rách giấy; HUD `mang/sức chứa` và số đèn cần giữ.
+- ADR-0001, 14 test P3; 4 test cũ sửa có lý do (R-05, R-14, P2-01, P2-07).
+### Sửa
+- `npm start` tự tải binary Electron nếu npm bỏ qua postinstall.
+
 ## [Phase 2] — Ticket-02 "Ba hòn đảo" · contract v1.1 · tag `phase-2`
 ### Thêm
 - Đêm 2 (Đảo Cau: 2 đảo, cầu tre, bục nhảy) và Đêm 3 (Đảo Chuông: 3 tầng, dốc, bục, tháp chuông, gió); `--night 1|2|3`.

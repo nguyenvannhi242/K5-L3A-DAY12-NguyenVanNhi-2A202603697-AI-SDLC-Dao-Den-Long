@@ -21,3 +21,13 @@
   3. Gió Lạc biến mất sớm 1 tick (bộ đếm đặt ở bước 7 rồi bị trừ ngay ở bước 8). Test P2-15 bắt. Sửa bằng mốc `sim_tick` tuyệt đối; thêm quy tắc vào AGENTS.md.
   4. Test sai (không phải sim sai): P2-10 đi xuyên qua bục nhảy, P2-17 đứng trên chỗ bùa nên nhặt lại ngay, P2-09 kỳ vọng sai thời điểm đặt vận tốc. Phát hiện bằng trace từng tick (`tmp/*.mjs`) trước khi sửa — không sửa sim để chiều test.
 - **Chỉnh harness:** AGENTS.md cập nhật cho v1.1 + 2 quy tắc rút ra từ lỗi trên; thêm skill `verify-proof` + `scripts/shot.cjs` (chụp ảnh/FPS từ bản build thật) — agent tự chạy game và lưu bằng chứng.
+
+## Phase 3
+
+- **Đạt:** mọi mục của Ticket-03 (7 phần) có test hoặc ảnh; 64 test xanh. ADR-0001 mô tả mô hình trạng thái đèn và luật thắng; CHANGELOG có mục breaking changes.
+- **Hỏng phase trước?** Hành vi cũ bị thay đúng theo ticket. Đúng 4 test đỏ khi áp luật mới (R-05, R-14, P2-01, P2-07) — cả 4 đều là luật được đánh dấu [THAY THẾ]; sửa kèm comment `[Phase 3 sửa]`, không skip. 46 test còn lại không đổi vẫn xanh.
+- **Thiết kế giúp phase ngắn:** từ Phase 1 đã tách module luật thắng/điểm và theo thứ tự tick Ticket-02, nên đổi luật chỉ chạm `interact`, `checkEnd`, bước 2 và nhánh `drain`.
+- **AI sai ở đâu:**
+  1. Bash heredoc dài chứa nhiều dấu nháy bị vỡ → chuyển sang ghi script vá ra file rồi chạy.
+  2. 2 test P3 tự viết sai biên (vòng lặp kiểm tới tick 61 trong khi tick 61 đã mất vùng an toàn; ngưỡng `< 160` trong khi tính tay ra đúng 160). Sim đúng — kiểm bằng tính tay số đơn vị dầu (1740 − 1 − 11·158 ≤ 0) trước khi sửa test.
+- **Chỉnh harness:** AGENTS.md cập nhật v1.2 + quy tắc "tính tay ranh giới tick trước khi viết assert".
