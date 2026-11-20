@@ -1,0 +1,11 @@
+node_modules/
+dist/
+out/
+*.log
+.env
+.env.*
+!.env.example
+# Ban luu lab board (noi dung phase chua phat hanh, khong public)
+*Lab (*.html
+# Output tam cua headless/test
+tmp/
