@@ -5,44 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Đảo Đèn Lồng</title>
     <style>
-      :root { --sky: #0E1430; --fog: #1B2350; --text: #F5F1E6; --gold: #F2C14E; --lit: #FFB347; --danger: #FF5A5F; --red: #C8102E; }
+      :root { --sky: #0E1430; --fog: #1B2350; --text: #F5F1E6; --gold: #F2C14E; --lit: #FFB347; --danger: #FF5A5F; --red: #C8102E; --shade: #7A3CFF; }
       html, body { margin: 0; height: 100%; background: var(--sky); overflow: hidden; font-family: system-ui, "Segoe UI", sans-serif; color: var(--text); }
       canvas { display: block; }
+      /* Ticket-04: chữ UI tối thiểu 18 px ở 1280×720; tùy chọn chữ lớn ×1.25 */
       .hud { position: fixed; font-size: 20px; pointer-events: none; text-shadow: 0 1px 3px #000c; }
+      body.large .hud, body.large .screen > div { zoom: 1.25; }
       #hud { display: none; }
       #hud-tl { top: 14px; left: 18px; font-size: 22px; }
       #hud-tc { top: 12px; left: 50%; transform: translateX(-50%); font-size: 30px; font-variant-numeric: tabular-nums; }
       #hud-tc.danger { color: var(--danger); animation: blink 1s steps(2) infinite; }
-      body.cb { --danger: #FFFFFF; }
+      body.cb { --danger: #FFFFFF; --shade: #00B3FF; }
+      body.reduced #hud-tc.danger { animation: none; }
       @keyframes blink { 50% { opacity: .35; } }
       #hud-tr { top: 14px; right: 18px; text-align: right; line-height: 1.35; }
       #hud-tr .score { color: var(--gold); }
       #hud-bc { bottom: 18px; left: 50%; transform: translateX(-50%); }
       #hud-br { bottom: 18px; right: 18px; display: flex; gap: 12px; }
-      .cd { width: 58px; height: 58px; border-radius: 12px; background: #1B2350cc; border: 2px solid #F2C14E88; display: grid; place-items: center; font-size: 18px; position: relative; overflow: hidden; }
+      .cd { width: 62px; height: 62px; border-radius: 12px; background: #1B2350cc; border: 2px solid #F2C14E88; display: grid; place-items: center; font-size: 18px; position: relative; overflow: hidden; }
       .cd span { position: relative; z-index: 1; }
       .cd i { position: absolute; left: 0; right: 0; bottom: 0; background: #0E1430d0; }
-      #hint { bottom: 70px; left: 50%; transform: translateX(-50%); color: #FFE9B0; font-size: 20px; }
-      #sub { bottom: 110px; left: 50%; transform: translateX(-50%); font-size: 20px; background: #0E1430b0; padding: 4px 12px; border-radius: 8px; display: none; }
-      #arrow { width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-bottom: 30px solid var(--lit); filter: drop-shadow(0 0 6px var(--lit)); display: none; }
+      #hint { bottom: 72px; left: 50%; transform: translateX(-50%); color: #FFE9B0; font-size: 20px; }
+      #subs { bottom: 112px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column-reverse; align-items: center; gap: 6px; }
+      #subs div { font-size: 20px; background: #0E1430c8; padding: 4px 14px; border-radius: 8px; }
+      .arrow { width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-bottom: 30px solid var(--lit); filter: drop-shadow(0 0 6px var(--lit)); display: none; }
+      #shade-arrow { border-bottom-color: var(--shade); filter: drop-shadow(0 0 6px var(--shade)); }
       .slots { display: flex; gap: 5px; align-items: center; }
       .slot.hidden { display: none; }
       #carry { margin-left: 8px; font-size: 18px; }
       .slot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #FFE58A66; }
       .slot.on { background: #FFF6C2; box-shadow: 0 0 8px #FFE58A; border-color: #FFE58A; }
-      .screen { position: fixed; inset: 0; display: none; place-items: center; background: #0E1430e0; text-align: center; }
+      #flash { position: fixed; inset: 0; background: #FF5A5F; opacity: 0; pointer-events: none; }
+      .screen { position: fixed; inset: 0; display: none; place-items: center; background: #0E1430e0; text-align: center; overflow-y: auto; }
       .screen.show { display: grid; }
       .screen h1 { font-size: 54px; margin: 0 0 10px; color: var(--lit); }
       .screen h2 { font-size: 30px; margin: 0 0 8px; color: var(--gold); }
       .screen p { font-size: 20px; margin: 8px auto; max-width: 720px; line-height: 1.5; }
       .screen button { font: inherit; font-size: 20px; margin: 6px; padding: 10px 22px; border-radius: 10px; border: 2px solid var(--gold); background: #1B2350; color: var(--text); cursor: pointer; min-width: 220px; }
-      .screen button:hover, .screen button:focus-visible { background: #2a3570; outline: none; }
-      .menu { display: flex; flex-direction: column; align-items: center; }
-      label { display: block; font-size: 20px; margin: 14px 0; }
+      .screen button:hover, .screen button:focus-visible { background: #2a3570; outline: 3px solid var(--lit); }
+      .menu { display: flex; flex-direction: column; align-items: center; padding: 20px 0; }
+      label { display: block; font-size: 20px; margin: 12px 0; }
       input[type=range] { width: 260px; vertical-align: middle; }
-      #help { position: fixed; top: 52px; left: 18px; font-size: 16px; opacity: .7; pointer-events: none; }
+      input[type=checkbox] { width: 20px; height: 20px; vertical-align: middle; }
+      input[type=text] { font: inherit; font-size: 22px; padding: 8px 12px; border-radius: 8px; border: 2px solid var(--gold); background: #0E1430; color: var(--text); width: 260px; }
+      #help { position: fixed; top: 52px; left: 18px; font-size: 18px; opacity: .75; pointer-events: none; }
       #dawn { background: linear-gradient(#FFB347, #F2C14E 40%, #1B2350); color: #0E1430; }
       #dawn h1, #dawn h2 { color: #0E1430; }
+      .save { margin-top: 10px; display: flex; flex-direction: column; align-items: center; }
+      .save .msg { font-size: 18px; min-height: 26px; }
+      .save .msg.err { color: var(--danger); }
+      #dawn .save .msg.err { color: #7a0010; }
+      table.board { border-collapse: collapse; font-size: 20px; margin: 10px auto; min-width: 640px; }
+      table.board th, table.board td { padding: 6px 14px; border-bottom: 1px solid #F2C14E44; }
+      table.board tr.me td { color: var(--lit); font-weight: bold; }
+      .keys { display: grid; grid-template-columns: auto auto; gap: 6px 16px; align-items: center; font-size: 20px; margin: 8px auto; text-align: left; }
+      .keys button { min-width: 150px; margin: 0; padding: 6px 12px; font-size: 18px; }
+      .keys button.conflict { border-color: var(--danger); color: var(--danger); }
+      .keys button.wait { background: #2a3570; }
+      #key-msg { font-size: 18px; min-height: 26px; color: var(--danger); }
+      .cols { display: flex; gap: 40px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
     </style>
   </head>
   <body>
@@ -56,15 +77,18 @@
         <div class="cd" id="cd-pulse"><span>Sáng</span><i></i></div>
       </div>
       <div id="hint" class="hud"></div>
-      <div id="sub" class="hud"></div>
-      <div id="arrow" class="hud"></div>
-      <div id="help">WASD đi · chuột / ← → camera · Space nhảy · Shift lướt · E nạp đèn · F / chuột trái tỏa sáng · Esc/P tạm dừng</div>
+      <div id="subs" class="hud" aria-live="polite"></div>
+      <div id="arrow" class="hud arrow"></div>
+      <div id="shade-arrow" class="hud arrow"></div>
+      <div id="help" class="hud"></div>
     </div>
+    <div id="flash"></div>
 
     <div id="menu" class="screen show"><div class="menu">
       <h1>Đảo Đèn Lồng</h1>
-      <p>Sương đen đã nuốt ánh sáng của các đảo. Giúp Mây thắp lại Đèn Lồng Lớn.</p>
+      <p>Sương đen đã nuốt ánh sáng của các đảo. Giúp Mây giữ các Đèn Lồng Lớn sáng tới bình minh.</p>
       <button id="btn-start">Bắt đầu</button>
+      <button id="btn-board">Bảng xếp hạng</button>
       <button id="btn-settings">Cài đặt</button>
     </div></div>
 
@@ -79,6 +103,7 @@
       <h1 id="res-title"></h1>
       <p id="res-reason"></p>
       <p id="res-score"></p>
+      <div id="res-save"></div>
       <button id="btn-next"></button>
       <button id="btn-res-menu">Về menu</button>
     </div></div>
@@ -93,18 +118,46 @@
 
     <div id="settings" class="screen"><div class="menu">
       <h1>Cài đặt</h1>
-      <label>Âm lượng <input id="set-volume" type="range" min="0" max="1" step="0.05" /> <b id="set-volume-v"></b></label>
-      <label>Độ nhạy chuột <input id="set-sens" type="range" min="0.2" max="3" step="0.1" /> <b id="set-sens-v"></b></label>
-      <label><input id="set-cb" type="checkbox" /> Bảng màu dễ phân biệt</label>
+      <div class="cols">
+        <div>
+          <label>Âm lượng <input id="set-volume" type="range" min="0" max="1" step="0.05" /> <b id="set-volume-v"></b></label>
+          <label>Độ nhạy chuột <input id="set-sens" type="range" min="0.2" max="3" step="0.1" /> <b id="set-sens-v"></b></label>
+          <label><input id="set-cb" type="checkbox" /> Bảng màu dễ phân biệt</label>
+          <label><input id="set-reduced" type="checkbox" /> Giảm chuyển động (tắt rung camera, chớp màn hình)</label>
+          <label><input id="set-large" type="checkbox" /> Chữ lớn (×1.25)</label>
+        </div>
+        <div>
+          <h2>Phím</h2>
+          <div class="keys" id="keys"></div>
+          <div id="key-msg" aria-live="polite"></div>
+          <button id="btn-keys-reset">Khôi phục mặc định</button>
+        </div>
+      </div>
       <button id="btn-settings-back">Xong</button>
+    </div></div>
+
+    <div id="board" class="screen"><div class="menu">
+      <h1>Bảng xếp hạng</h1>
+      <table class="board"><thead><tr><th>#</th><th>Tên</th><th>Điểm</th><th>Đêm thắng</th><th>Thời điểm</th></tr></thead><tbody id="board-rows"></tbody></table>
+      <p id="board-where"></p>
+      <button id="btn-board-back">Về menu</button>
     </div></div>
 
     <div id="dawn" class="screen"><div class="menu">
       <h1>Bình Minh</h1>
       <p>Ba hòn đảo đã sáng trở lại. Chuông Đảo Chuông ngân gọi mặt trời.</p>
       <h2 id="dawn-score"></h2>
+      <div id="dawn-save"></div>
       <button id="btn-dawn-menu">Về menu</button>
     </div></div>
+
+    <template id="save-tpl">
+      <div class="save">
+        <label>Lưu điểm với tên <input type="text" maxlength="12" placeholder="3–12 ký tự" autocomplete="off" /></label>
+        <button class="btn-save">Lưu vào bảng xếp hạng</button>
+        <div class="msg" aria-live="polite"></div>
+      </div>
+    </template>
 
     <script type="module" src="/src/render/main.js"></script>
   </body>

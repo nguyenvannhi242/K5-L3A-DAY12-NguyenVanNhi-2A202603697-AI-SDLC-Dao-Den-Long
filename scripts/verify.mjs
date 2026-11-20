@@ -39,6 +39,7 @@ say(`${same ? 'PASS' : 'FAIL'}  determinism (2 runs identical, ${a.split('\n').l
 if (!same) failed = true;
 say(`      end: ${a.trim().split('\n').at(-1)}`);
 
+step('soak 3 nights (1 process)', process.execPath, ['--expose-gc', 'headless/soak.js', '--seed', '7', '--nights', '3', '--out', 'tmp/verify-soak.json']);
 step('vite build', 'npm', ['run', 'build', '--silent']);
 
 say(failed ? 'RESULT: FAIL' : 'RESULT: PASS');

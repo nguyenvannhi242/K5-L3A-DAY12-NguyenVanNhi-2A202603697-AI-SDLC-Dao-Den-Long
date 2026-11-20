@@ -9,3 +9,4 @@ out/
 *Lab (*.html
 # Output tam cua headless/test
 tmp/
+leaderboard-export.json

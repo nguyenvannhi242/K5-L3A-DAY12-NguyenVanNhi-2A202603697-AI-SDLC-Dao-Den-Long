@@ -1,0 +1,14 @@
+{
+  "contract_version": "1.3",
+  "avg_fps": 714.4,
+  "p1_low_fps": 308.5,
+  "frame_ms_p95": 2.1,
+  "frames": 21431,
+  "load_ms": 583,
+  "peak_mem_mb": 389.1,
+  "vsync_off": true,
+  "renderer": "three.js r170 · WebGL2 · ANGLE (NVIDIA, NVIDIA GeForce RTX 3050 Laptop GPU (0x000025E2) Direct3D11 vs_5_0 ps_5_0, D3D11) · Electron 33.3.1 / Chromium 130.0.6723.170",
+  "os": "Windows_NT 10.0.26200 x64 · AMD Ryzen 5 5600H with Radeon Graphics · 16 GB RAM",
+  "seed": 42,
+  "duration_s": 30
+}
