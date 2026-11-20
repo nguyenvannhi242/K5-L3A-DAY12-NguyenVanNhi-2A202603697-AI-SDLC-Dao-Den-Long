@@ -11,9 +11,9 @@ export function headless(args) {
   return spawnSync(process.execPath, ['headless/run.js', ...args], { encoding: 'utf8' });
 }
 
-export function play({ scenario, frames, ticks = 600, seed = 1, every = 1 } = {}) {
+export function play({ scenario, frames, ticks = 600, seed = 1, every = 1, night = 1 } = {}) {
   const id = n++;
-  const args = ['--seed', String(seed), '--night', '1', '--ticks', String(ticks), '--snapshot-every', String(every)];
+  const args = ['--seed', String(seed), '--night', String(night), '--ticks', String(ticks), '--snapshot-every', String(every)];
   if (scenario) {
     const f = join(dir, `s${id}.json`);
     writeFileSync(f, JSON.stringify(scenario));

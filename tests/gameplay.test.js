@@ -45,7 +45,7 @@ test('R-05 nạp đèn: một lần bấm nạp min(mang, còn thiếu); đủ 1
     frames: [{ tick: 0, interact: true }],
     ticks: 30,
   });
-  assert.deepEqual(r.events().slice(0, 2).map((e) => [e.tick, e.name, e.data]), [
+  assert.deepEqual(r.events().filter((e) => e.tick > 0).slice(0, 2).map((e) => [e.tick, e.name, e.data]), [
     [1, 'deposit', { lantern_id: 'L1', amount: 10, deposited: 10 }],
     [1, 'lantern_lit', { lantern_id: 'L1' }],
   ]);
@@ -178,7 +178,8 @@ test('R-16 thua khi hết Ngọn Lửa (no_flames)', () => {
 test('R-17 rơi khỏi đảo: −1 Ngọn Lửa, mất hết đom đóm, hồi sinh ở (0,0,0) sau 60 tick', () => {
   const r = play({ scenario: { ...quiet, player: { pos: [39.5, 0, 0], carried: 4 } }, frames: [{ tick: 0, move: [1, 0] }, { tick: 10, move: [0, 0] }], ticks: 200 });
   const [hit] = r.events('player_hit');
-  assert.deepEqual(hit.data, { by: 'fall', flames: 2, dropped: 4 });
+  // [Phase 2 sửa] Ticket-02/v1.1 thêm trường `lost` cho rơi: đom đóm bị MẤT (không rơi ra đất) → dropped 0, lost 4.
+  assert.deepEqual(hit.data, { by: 'fall', flames: 2, dropped: 0, lost: 4 });
   assert.notDeepEqual(r.snap(hit.tick + 59).player.pos, [0, 0, 0]);
   assert.deepEqual(r.snap(hit.tick + 60).player.pos, [0, 0, 0]);
   assert.equal(r.snap(hit.tick + 60).player.carried, 0);
@@ -195,7 +196,8 @@ test('R-18 sinh ngẫu nhiên: 20 đom đóm ban đầu, +1 mỗi 240 tick; 2 B�
 
 test('R-19 dựng scenario không phát sự kiện; motes/shades thay thế, lantern cập nhật theo id', () => {
   const r = play({ scenario: { motes: [[1, 0, 1]], shades: [], lanterns: [{ id: 'L3', lit: true }] }, ticks: 0 });
-  assert.deepEqual(r.lines.map((l) => l.type), ['snapshot', 'end']);
+  // [Phase 2 sửa] v1.1 thêm sự kiện night_start ở đầu Đêm (tick 0); dựng scenario vẫn không phát sự kiện nào khác.
+  assert.deepEqual(r.lines.map((l) => l.type === 'event' ? l.name : l.type), ['snapshot', 'night_start', 'end']);
   const s0 = r.snap(0);
   assert.equal(s0.motes_active, 1);
   assert.equal(s0.shades.length, 0);
