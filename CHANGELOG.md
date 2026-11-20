@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0] / [Phase 4] — Ticket-04 "Bình minh" · contract v1.3 · tag `phase-4` + Release `v1.0.0`
+### Thêm
+- Chế độ benchmark (`bench_cmd`): cảnh chuẩn 200 Bóng Mực + 100 đom đóm, camera bay vòng, tắt vsync, xuất `bench.json` (avg/p1/p95/frames/load/peak mem).
+- Soak test (`soak_cmd`): 10 Đêm trong một tiến trình, xuất `soak.json`.
+- Bảng xếp hạng cục bộ top 10 lưu trên đĩa, màn hình từ menu, `--export-leaderboard`.
+- Dễ tiếp cận: đổi phím (báo trùng, khôi phục mặc định), phụ đề + mũi tên mép màn hình, giảm chuyển động, chữ lớn ×1.25, chữ UI ≥ 18 px.
+- `InstancedMesh` cho Bóng Mực/đom đóm; launcher `scripts/launch.cjs`; chế độ chụp bằng chứng `--shot`.
+- README đầy đủ, CREDITS, LICENSE (MIT), retro; `bench.json`, `soak.json`.
+### Thay đổi
+- `contract_version` 1.3; `build_cmd` = `npm ci && npm run build`; `run_cmd` = `node scripts/launch.cjs` (nhận nguyên tham số).
+
 ## [Phase 3] — Ticket-03 "Đèn cạn dầu" · contract v1.2 · tag `phase-3`
 ### Thay đổi phá vỡ tương thích (breaking changes)
 - **Luật thắng:** bỏ thắng sớm `all_lit`; thắng `dawn_survived` khi còn sống lúc hết giờ và số đèn đang sáng ≥ ceil(0.6 × tổng). `game_over.reason` không còn `all_lit`.

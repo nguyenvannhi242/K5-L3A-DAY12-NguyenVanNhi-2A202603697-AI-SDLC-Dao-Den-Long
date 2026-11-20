@@ -31,3 +31,11 @@
   1. Bash heredoc dài chứa nhiều dấu nháy bị vỡ → chuyển sang ghi script vá ra file rồi chạy.
   2. 2 test P3 tự viết sai biên (vòng lặp kiểm tới tick 61 trong khi tick 61 đã mất vùng an toàn; ngưỡng `< 160` trong khi tính tay ra đúng 160). Sim đúng — kiểm bằng tính tay số đơn vị dầu (1740 − 1 − 11·158 ≤ 0) trước khi sửa test.
 - **Chỉnh harness:** AGENTS.md cập nhật v1.2 + quy tắc "tính tay ranh giới tick trước khi viết assert".
+
+## Phase 4
+
+- **Đạt:** bench (714/309 FPS, 0.58 s), soak (0 crash, ×1.165), bảng xếp hạng (lưu đĩa + export), trợ năng (đổi phím, phụ đề + mũi tên, giảm chuyển động, chữ lớn), README/CHANGELOG/CREDITS/LICENSE, contract v1.3. 70 test xanh.
+- **Hỏng phase trước?** Không. 1 test P3-01 nới kiểm phiên bản contract (ghi `[Phase 4 sửa]`).
+- **Rủi ro còn lại:** soak ×1.165 sát ngưỡng 1.2 (đã phân tích: không rò rỉ); máy chấm khác máy tác giả.
+- **AI sai ở đâu:** script vá dừng giữa chừng nhưng lệnh chạy app vẫn tiếp tục → cửa sổ treo, phải dừng tác vụ; bench lấy cài đặt mù màu còn lưu → phát hiện khi xem ảnh; test P4-06 kỳ vọng sai thứ tự bằng điểm.
+- **Chỉnh harness:** chế độ `--shot` chạy trên app thật (có preload/IPC); `reset-settings.js`; `verify` thêm soak 3 Đêm; skill verify-proof cập nhật.

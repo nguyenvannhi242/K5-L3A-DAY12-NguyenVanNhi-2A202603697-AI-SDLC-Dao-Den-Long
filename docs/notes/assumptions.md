@@ -59,3 +59,18 @@ Ticket-03 thay A13/A14 (luật thắng, điểm) và thời lượng Đêm. Gi�
 | C6 | Scenario `drain` thiếu `target_lantern_id` | Lấy đèn sáng gần nhất | |
 | C7 | Scenario `lit:true` | Luôn `ever_lit = true`; thiếu `fuel` → 100; `lit:false` → fuel 0 | Ticket: "lit:true mà không có fuel → 100" |
 | C8 | Dầu khi thắng | `floor(fuel)` theo dầu tại tick bình minh (sau khi trừ dầu của tick đó) | |
+
+## Phase 4 (Ticket-04, contract v1.3)
+
+| # | Chỗ mơ hồ | Giả định | Ghi chú |
+|---|---|---|---|
+| D1 | "Đêm thứ i dùng seed 7 + i" | i đếm từ 1 → Đêm 1 seed 8 … Đêm 10 seed 17 | |
+| D2 | Input ngẫu nhiên soak | RNG riêng theo seed của Đêm; nút chỉ `true` trong tick trúng xác suất (cạnh false→true tự nhiên) | |
+| D3 | `mem_start_mb` | RSS sau khi tạo + `night_start` Đêm đầu, trước bước đầu tiên, sau `gc()` (`--expose-gc` trong `soak_cmd`) | Không làm nóng trước |
+| D4 | `load_ms` | Từ lúc tiến trình Electron chính bắt đầu tới khung hình đầu tiên của cảnh bench (không tính launcher Node) | |
+| D5 | `peak_mem_mb` | Tổng working set (RSS) mọi tiến trình Electron, lấy mẫu mỗi 200 ms trong khoảng đo | |
+| D6 | Rải đều 200 Bóng Mực / 100 đom đóm | Phân bố đều trong đĩa bán kính 39 m (r = 39·√u) theo seed | |
+| D7 | Cài đặt người chơi trong bench | Bỏ qua (mù màu/chữ lớn/giảm chuyển động) để mọi máy đo cùng cảnh | |
+| D8 | `seed` trong bảng xếp hạng | Seed của cả lượt chơi; Đêm n dùng seed lượt + n | |
+| D9 | Tên tiếng Việt | Chấp nhận chữ Unicode có dấu (chuẩn hóa NFC), vẫn 3–12 ký tự, không khoảng trắng | Điểm cộng |
+| D10 | Bản phát hành chạy được | Thư mục web tĩnh `dist/` (zip) + chạy Electron từ mã nguồn bằng `npm ci && npm start` | |
