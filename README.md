@@ -1,6 +1,6 @@
 # Đảo Đèn Lồng
 
-> 🎬 **Video demo:** _(link Release v1.0.0 — đang cập nhật)_ · 📦 **Release:** [v1.0.0](../../releases/tag/v1.0.0)
+> 🎬 **Video demo:** [Xem video (Google Drive)](https://drive.google.com/file/d/1_eZll-8A5xa0kczBCMeC2GR2es96JJq0/view?usp=sharing) · 📦 **Release:** [v1.0.0](../../releases/tag/v1.0.0)
 
 Game 3D góc nhìn thứ ba. Mây, người giữ đèn nhỏ tuổi đội nón lá treo đèn lồng, gom đom đóm để thắp và **giữ** các Đèn Lồng Lớn sáng tới bình minh trên 3 hòn đảo (Đảo Bến, Đảo Cau, Đảo Chuông), né Bóng Mực hút dầu và Gió Lạc cướp ánh sáng. Bài lab Day 12 AI SDLC (đề gốc: [docs/lab/](docs/lab/README.md)).
 
