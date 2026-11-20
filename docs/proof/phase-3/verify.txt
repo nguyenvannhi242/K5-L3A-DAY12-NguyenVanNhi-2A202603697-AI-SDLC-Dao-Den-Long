@@ -1,0 +1,9 @@
+verify @ 2026-11-20T12:35:12.481Z · node v24.21.0 · win32 x64
+commit 027e1cc
+PASS  npm test  (5832 ms)
+PASS  headless full night → tmp/verify-a.jsonl  (189 ms)
+PASS  headless full night → tmp/verify-b.jsonl  (193 ms)
+PASS  determinism (2 runs identical, 1451 lines)
+      end: {"type":"end","ticks":14400,"state":"lost","score":0}
+PASS  vite build  (2350 ms)
+RESULT: PASS
