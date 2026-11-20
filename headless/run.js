@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// Headless runner theo Test Contract v1.0.
-// <cmd> --seed <int> --night 1 [--scenario f] [--inputs f] --ticks <int> --out <f.jsonl> [--snapshot-every <int>]
+// Headless runner theo Test Contract v1.1.
+// <cmd> --seed <int> --night <1|2|3> [--scenario f] [--inputs f] --ticks <int> --out <f.jsonl> [--snapshot-every <int>]
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createGame } from '../src/sim/game.js';
 import { snapshotLine, eventLine, endLine } from '../src/sim/output.js';
@@ -37,7 +37,7 @@ function parseArgs(argv) {
     inputs: a.inputs,
   };
   if (!opts.out) throw new UsageError('thiếu --out');
-  if (opts.night !== 1) throw new UsageError('--night chỉ nhận 1 ở contract v1.0');
+  if (![1, 2, 3].includes(opts.night)) throw new UsageError('--night nhận 1, 2, 3');
   if (opts.ticks < 0) throw new UsageError('--ticks phải ≥ 0');
   if (opts.snapshotEvery < 1) throw new UsageError('--snapshot-every phải ≥ 1');
   return opts;
@@ -68,6 +68,8 @@ export function run(argv) {
   const lines = [];
   const emit = (o) => lines.push(JSON.stringify(o));
   emit(snapshotLine(s));
+  game.start(); // night_start {night} ở tick 0 (giả định B1)
+  for (const ev of game.events.splice(0)) emit(eventLine(s, ev));
   for (let k = 0; k < opts.ticks && s.state === 'playing'; k++) {
     game.step(inputAt(k));
     for (const ev of game.events.splice(0)) emit(eventLine(s, ev));

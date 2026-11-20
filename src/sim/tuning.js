@@ -1,5 +1,5 @@
 // Nguồn sự thật duy nhất cho số liệu game. game.contract.json phải khớp TUNING (có test kiểm).
-// Phase 1 dùng luôn số chuẩn của Ticket-02 (xem docs/notes/plan.md, assumptions.md).
+// Số chuẩn theo Ticket-02 (contract v1.1).
 export const TICK_RATE = 60;
 export const DT = 1 / TICK_RATE;
 
@@ -13,6 +13,8 @@ export const TUNING = {
   pulse_cost: 3,
   pulse_radius: 5.0,
   night1_duration_s: 300,
+  night2_duration_s: 330,
+  night3_duration_s: 360,
   flames: 3,
   invuln_s: 1.5,
   hit_drop_ratio: 0.5,
@@ -22,6 +24,9 @@ export const TUNING = {
   safe_radius: 6.0,
   shade_speed: 4.0,
   shade_hit_radius: 1.0,
+  dash_speed: 14.0,
+  dash_duration_s: 0.2,
+  dash_cooldown_s: 1.5,
   fall_enabled: true,
   score: {
     per_mote: 10,
@@ -32,16 +37,18 @@ export const TUNING = {
   },
 };
 
-// Luật/hằng số nội bộ không có khóa trong contract v1.0 (giá trị theo Ticket-02 hoặc giả định A*).
+// Luật/hằng số nội bộ không có khóa trong contract (giá trị theo Ticket-02 hoặc giả định A*/B*).
 export const RULES = {
   jump_speed: 7.0,
   gravity: -20.0,
+  step_height: 0.35, // B3: chênh cao tối đa đi bộ lên được (dốc), cao hơn là vách
   fall_y: -10,
   fall_wait_ticks: 60,
   respawn_invuln_ticks: 90,
   pickup_height: 1.5,
   hit_height: 1.5,
-  shade_center_y: 1.0, // A6
+  pulse_center_y: 0.8,
+  shade_hover_y: 1.0, // A6: tâm Bóng Mực cao 1 m trên mặt đất bên dưới
   shade_wander_speed: 2.0, // A7
   shade_wander_stop_m: 2.0,
   shade_detect_m: 12,
@@ -58,28 +65,23 @@ export const RULES = {
   mote_spawn_every: 240,
   shade_first_tick: 300,
   shade_first_count: 2,
-  shade_every: 480,
-  shade_max: 6,
   shade_min_player_dist: 15,
-};
-
-// Góc đo từ +X; điểm ở góc a = (r·cos a, 0, r·sin a) — khớp tọa độ đèn chuẩn (A3).
-const ring = (r, startDeg, stepDeg, n, y = 0) =>
-  Array.from({ length: n }, (_, i) => {
-    const a = ((startDeg + i * stepDeg) * Math.PI) / 180;
-    return [Math.round(r * Math.cos(a) * 1000) / 1000, y, Math.round(r * Math.sin(a) * 1000) / 1000];
-  });
-
-// Bản đồ chuẩn Đêm 1 — Đảo Bến.
-export const NIGHT1 = {
-  island_radius: 40,
-  lanterns: [
-    { id: 'L1', pos: [0, 0, 25] },
-    { id: 'L2', pos: [23.8, 0, 7.7] },
-    { id: 'L3', pos: [14.7, 0, -20.2] },
-    { id: 'L4', pos: [-14.7, 0, -20.2] },
-    { id: 'L5', pos: [-23.8, 0, 7.7] },
-  ],
-  mote_points: [...ring(12, 0, 45, 8), ...ring(33, 0, 22.5, 16)],
-  shade_points: ring(37, 15, 30, 12),
+  charm_speed: 7.2,
+  charm_ticks: 600,
+  charm_respawn_ticks: 2700,
+  drifter_speed: 7.0,
+  drifter_idle_speed: 2.0,
+  drifter_hover_y: 1.5, // B6
+  drifter_every: 1200,
+  drifter_max: 2,
+  drifter_min_carried: 5,
+  drifter_detect_m: 15,
+  drifter_touch_m: 1.2,
+  drifter_steal_max: 3,
+  drifter_flee_ticks: 240,
+  drifter_drop_vanish_ticks: 120,
+  wind_every: 1800,
+  wind_ticks: 300,
+  wind_warn_ticks: 120,
+  wind_speed: 2.0,
 };

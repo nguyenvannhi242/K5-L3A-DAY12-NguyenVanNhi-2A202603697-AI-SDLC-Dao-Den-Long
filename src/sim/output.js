@@ -1,22 +1,38 @@
-// Định dạng output JSONL theo Test Contract v1.0.
+// Định dạng output JSONL theo Test Contract v1.1.
 import { TICK_RATE } from './tuning.js';
 
 const r3 = (v) => Math.round(v * 1000) / 1000 + 0; // +0: bỏ -0
 const pos3 = (p) => p.map(r3);
+const sec = (ticks) => r3(ticks / TICK_RATE);
 
 export function snapshotLine(s) {
+  const p = s.player;
   return {
     type: 'snapshot',
     tick: s.tick,
     sim_tick: s.sim_tick,
-    state: s.state,
-    time_left_s: r3(s.time_left_ticks / TICK_RATE),
+    state: s.state === 'playing' && s.paused ? 'paused' : s.state,
+    night: s.night,
+    time_left_s: sec(s.time_left_ticks),
     score: s.score,
-    player: { pos: pos3(s.player.pos), flames: s.player.flames, carried: s.player.carried },
+    wind: { active: s.wind.active > 0, dir_deg: r3(s.wind.dir_deg) },
+    player: {
+      pos: pos3(p.pos),
+      vel: pos3(p.vel),
+      grounded: p.grounded,
+      invuln: p.invuln > 0,
+      dash_cd_s: sec(p.dash_cd),
+      pulse_cd_s: sec(p.pulse_cd),
+      charm_s: sec(p.charm),
+      flames: p.flames,
+      carried: p.carried,
+    },
     lanterns: s.lanterns.map((l) => ({ id: l.id, pos: pos3(l.pos), lit: l.lit, deposited: l.deposited })),
     shades: s.shades.map((sh) => ({ id: sh.id, pos: pos3(sh.pos), state: sh.state })),
     motes_active: s.motes.length,
-    motes: s.motes.map((m) => ({ id: m.id, pos: pos3(m.pos) })),
+    motes: s.motes.map((m) => ({ id: m.id, pos: pos3(m.pos), kind: m.kind, ttl_s: m.ttl == null ? null : sec(m.ttl) })),
+    drifters: s.drifters.map((d) => ({ id: d.id, pos: pos3(d.pos), state: d.state, stolen: d.stolen })),
+    charms: s.charms.map((c) => ({ id: c.id, available: c.available, respawn_s: sec(c.available ? 0 : c.respawn) })),
   };
 }
 
