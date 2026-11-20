@@ -1,0 +1,4 @@
+#!/bin/sh
+# Local CI: chặn push khi verify đỏ. Bật bằng: git config core.hooksPath .githooks
+echo "[pre-push] npm run verify"
+npm run verify --silent || { echo "[pre-push] verify FAIL — push bị chặn"; exit 1; }
