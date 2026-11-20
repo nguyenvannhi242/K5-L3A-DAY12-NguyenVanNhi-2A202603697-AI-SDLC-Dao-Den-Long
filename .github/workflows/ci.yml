@@ -1,0 +1,25 @@
+name: CI
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Headless smoke + tính tất định
+        run: |
+          mkdir -p tmp
+          node headless/run.js --seed 7 --night 1 --ticks 600 --inputs tests/scenarios/walk-forward.inputs.json --out tmp/a.jsonl
+          node headless/run.js --seed 7 --night 1 --ticks 600 --inputs tests/scenarios/walk-forward.inputs.json --out tmp/b.jsonl
+          cmp tmp/a.jsonl tmp/b.jsonl
+          tail -n 1 tmp/a.jsonl
+      - run: npm run build
