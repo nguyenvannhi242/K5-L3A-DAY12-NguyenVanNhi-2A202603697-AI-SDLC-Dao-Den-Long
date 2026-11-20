@@ -1,10 +1,11 @@
 #!/usr/bin/env node
-// Headless runner theo Test Contract.
-// <cmd> --seed <int> --night <int> [--scenario f] [--inputs f] --ticks <int> --out <f.jsonl> [--snapshot-every <int>]
+// Headless runner theo Test Contract v1.0.
+// <cmd> --seed <int> --night 1 [--scenario f] [--inputs f] --ticks <int> --out <f.jsonl> [--snapshot-every <int>]
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createGame } from '../src/sim/game.js';
-import { snapshotLine, endLine } from '../src/sim/output.js';
-import { parseInputs, createInputTimeline, InputFormatError } from './inputs.js';
+import { snapshotLine, eventLine, endLine } from '../src/sim/output.js';
+import { FormatError } from '../src/sim/errors.js';
+import { parseInputs, createInputTimeline } from './inputs.js';
 
 class UsageError extends Error {}
 
@@ -14,7 +15,7 @@ function parseArgs(argv) {
     const k = argv[i];
     if (!k.startsWith('--')) throw new UsageError(`tham số lạ: ${k}`);
     const v = argv[i + 1];
-    if (v === undefined || v.startsWith('--')) throw new UsageError(`thiếu giá trị cho ${k}`);
+    if (v === undefined || /^--[a-z]/.test(v)) throw new UsageError(`thiếu giá trị cho ${k}`);
     a[k.slice(2)] = v;
     i++;
   }
@@ -46,25 +47,19 @@ function readJson(path, label) {
   let text;
   try {
     text = readFileSync(path, 'utf8');
-  } catch (e) {
+  } catch {
     throw new UsageError(`không đọc được file ${label}: ${path}`);
   }
   try {
     return JSON.parse(text);
   } catch (e) {
-    throw new InputFormatError(`${label}: JSON sai định dạng (${e.message})`);
+    throw new FormatError(`${label}: JSON sai định dạng (${e.message})`);
   }
-}
-
-function validateScenario(sc) {
-  if (!sc || typeof sc !== 'object' || Array.isArray(sc)) throw new InputFormatError('scenario phải là object');
-  // TODO CP1: kiểm tra chi tiết từng trường.
-  return sc;
 }
 
 export function run(argv) {
   const opts = parseArgs(argv);
-  const scenario = opts.scenario ? validateScenario(readJson(opts.scenario, 'scenario')) : null;
+  const scenario = opts.scenario ? readJson(opts.scenario, 'scenario') : null;
   const frames = opts.inputs ? parseInputs(readJson(opts.inputs, 'inputs')) : [];
   const inputAt = createInputTimeline(frames);
   const game = createGame({ seed: opts.seed, night: opts.night, scenario });
@@ -75,7 +70,7 @@ export function run(argv) {
   emit(snapshotLine(s));
   for (let k = 0; k < opts.ticks && s.state === 'playing'; k++) {
     game.step(inputAt(k));
-    for (const ev of game.events.splice(0)) emit({ type: 'event', tick: s.tick, ...ev });
+    for (const ev of game.events.splice(0)) emit(eventLine(s, ev));
     if (s.tick % opts.snapshotEvery === 0) emit(snapshotLine(s));
   }
   emit(endLine(s));
@@ -87,5 +82,5 @@ try {
   process.exit(0);
 } catch (e) {
   process.stderr.write(`headless: ${e.message}\n`);
-  process.exit(e instanceof InputFormatError ? 2 : 1);
+  process.exit(e instanceof FormatError ? 2 : 1);
 }
