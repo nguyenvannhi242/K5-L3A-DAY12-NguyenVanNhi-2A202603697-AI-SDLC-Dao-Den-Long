@@ -5,12 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Đảo Đèn Lồng</title>
     <style>
-      html, body { margin: 0; height: 100%; background: #0E1430; overflow: hidden; }
-      #hud { position: fixed; top: 12px; left: 16px; color: #F5F1E6; font: 18px/1.3 system-ui, sans-serif; pointer-events: none; }
+      html, body { margin: 0; height: 100%; background: #0E1430; overflow: hidden; font-family: system-ui, sans-serif; color: #F5F1E6; }
+      canvas { display: block; }
+      .hud { position: fixed; font-size: 20px; pointer-events: none; text-shadow: 0 1px 3px #000a; }
+      #hud-tl { top: 14px; left: 18px; }
+      #hud-tc { top: 14px; left: 50%; transform: translateX(-50%); font-size: 26px; font-variant-numeric: tabular-nums; }
+      #hud-tr { top: 14px; right: 18px; text-align: right; }
+      #hud-bc { bottom: 18px; left: 50%; transform: translateX(-50%); }
+      #hud-br { bottom: 18px; right: 18px; text-align: right; font-size: 18px; }
+      #hint { bottom: 64px; left: 50%; transform: translateX(-50%); color: #FFE9B0; }
+      .danger { color: #FF5A5F; }
+      .slots { display: flex; gap: 4px; }
+      .slot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #FFE58A55; }
+      .slot.on { background: #FFF6C2; box-shadow: 0 0 8px #FFE58A; border-color: #FFE58A; }
+      #overlay { position: fixed; inset: 0; display: none; place-items: center; background: #0E1430cc; text-align: center; }
+      #overlay h1 { font-size: 56px; margin: 0 0 8px; color: #FFB347; }
+      #overlay p { font-size: 22px; margin: 6px 0; }
+      #help { position: fixed; top: 48px; left: 18px; font-size: 16px; opacity: .75; pointer-events: none; }
     </style>
   </head>
   <body>
-    <div id="hud">Đảo Đèn Lồng — CP0</div>
+    <div id="hud-tl" class="hud"></div>
+    <div id="hud-tc" class="hud"></div>
+    <div id="hud-tr" class="hud"></div>
+    <div id="hud-bc" class="hud"><div class="slots" id="slots"></div></div>
+    <div id="hud-br" class="hud"></div>
+    <div id="hint" class="hud"></div>
+    <div id="help">WASD đi · chuột / ← → xoay camera · Space nhảy · E nạp đèn · F / chuột trái tỏa sáng · R chơi lại</div>
+    <div id="overlay"><div><h1 id="ov-title"></h1><p id="ov-reason"></p><p id="ov-score"></p><p>Nhấn <b>R</b> để chơi lại</p></div></div>
     <script type="module" src="/src/render/main.js"></script>
   </body>
 </html>
