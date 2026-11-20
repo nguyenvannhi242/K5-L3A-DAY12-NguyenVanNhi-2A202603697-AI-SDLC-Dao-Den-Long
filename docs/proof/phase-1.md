@@ -1,6 +1,6 @@
 # Bằng chứng Phase 1 (PRD-0, Test Contract v1.0) · tag `phase-1`
 
-Chạy lại toàn bộ: `npm test` (28 test) hoặc `npm run verify` (test + tất định cả đêm + build). Log lần chạy ở tag này: [phase-1/verify.log](phase-1/verify.log).
+Chạy lại toàn bộ: `npm test` (28 test) hoặc `npm run verify` (test + tất định cả đêm + build). Log lần chạy ở tag này: [phase-1/verify.txt](phase-1/verify.txt).
 Mọi test gameplay chạy **tiến trình headless thật** (`tests/helpers.js` → `node headless/run.js`) rồi đọc file JSONL output, không gọi hàm nội bộ.
 
 ## Truy vết yêu cầu → bằng chứng
