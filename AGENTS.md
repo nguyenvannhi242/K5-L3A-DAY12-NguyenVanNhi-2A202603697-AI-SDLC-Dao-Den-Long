@@ -4,7 +4,8 @@ Game 3D (Three.js + Electron) có chế độ headless theo Test Contract. Yêu 
 
 ## Lệnh
 - Cài: `npm ci` · Chạy game: `npm start` · Dev web: `npm run dev`
-- Test (bắt buộc xanh trước khi xong việc): `npm test`
+- Test (bắt buộc xanh trước khi xong việc): `npm test` · CI trên máy: `npm run verify` (pre-push hook, GitHub Actions bị khóa)
+- Test gameplay = scenario chạy headless thật qua `tests/helpers.js#play`; mỗi yêu cầu một test `R-xx` khớp `docs/proof/phase-N.md`
 - Headless: `node headless/run.js --seed 1 --night 1 --ticks 600 --out tmp/out.jsonl [--inputs f] [--scenario f]`
 
 ## Cấu trúc
