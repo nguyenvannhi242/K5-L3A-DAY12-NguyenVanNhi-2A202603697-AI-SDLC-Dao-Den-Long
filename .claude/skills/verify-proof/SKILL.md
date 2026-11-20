@@ -15,13 +15,15 @@ cp tmp/verify.log docs/proof/phase-N/verify.txt   # *.log bị .gitignore
 - Mỗi yêu cầu mới → 1 test scenario headless trong `tests/phaseN.test.js` dùng `play()` của `tests/helpers.js` (chạy tiến trình thật, đọc JSONL).
 - Test cũ bị luật mới thay: sửa assertion kèm comment `// [Phase N sửa] <lý do>` và ghi vào CHANGELOG. Không `skip`.
 
-## 2. Ảnh và FPS từ bản build thật
+## 2. Ảnh và FPS từ app thật
 ```bash
 npm run build
-npx electron scripts/shot.cjs dist/index.html docs/proof/phase-N/<tên>.png scripts/shots/<setup>.js 1500
+node scripts/launch.cjs --shot tmp/r.png --setup scripts/shots/reset-settings.js --wait 300   # xóa cài đặt cũ
+node scripts/launch.cjs --shot docs/proof/phase-N/<tên>.png --setup scripts/shots/<setup>.js --wait 1500
 ```
-- `scripts/shots/*.js` chạy trong trang: dùng `window.__ddl` (`startNight(n)`, `state`, `goIntro(n)`, `setYaw`) để dựng tình huống, rồi để sim tự chạy. Không sửa kết quả hiển thị bằng tay.
-- Script in `fps <số>` = FPS trung bình giây gần nhất ở 1280×720. Ghi kèm cấu hình máy (CPU/GPU/RAM).
+- `--shot` chạy trong app Electron thật (có preload/IPC, lưu bảng xếp hạng ra đĩa); in `fps <số>` = FPS giây gần nhất ở 1280×720.
+- `scripts/shots/*.js` chạy trong trang: dùng `window.__ddl` (`startNight(n)`, `state`, `goIntro(n)`, `openBoard()`, `setWon()`, `setYaw`) để dựng tình huống, rồi để sim tự chạy. Không sửa kết quả hiển thị bằng tay. Luôn đặt `timeout` khi chạy.
+- Đo hiệu năng chính thức: `npm run bench` (→ `bench.json`), `npm run soak` (→ `soak.json`). Ghi kèm cấu hình máy.
 
 ## 3. Ghi bằng chứng
 Bảng trong `docs/proof/phase-N.md`: yêu cầu → cách kiểm chứng (tên test/ảnh) → kết quả (Đạt / Chưa đạt + lý do). Ảnh phải chụp từ đúng commit sẽ tag.
