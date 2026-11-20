@@ -22,3 +22,25 @@
 | A16 | Scenario `lit: true` không kèm `deposited` | deposited = 10 | |
 | A17 | Snapshot khi game kết thúc giữa chu kỳ | Không ghi snapshot thêm; dòng `end` luôn có | |
 | A18 | Seed của bản chơi | Bản chơi dùng seed ngẫu nhiên; headless dùng `--seed` | |
+
+## Phase 2 (Ticket-02, contract v1.1)
+
+Ticket-02 làm rõ/thay các giả định A1, A2, A9, A11, A13, A15 (đã khớp vì Phase 1 dùng sẵn số chuẩn). A10 đổi: Tỏa Sáng đo **3D** từ chân + 0.8 m.
+
+| # | Chỗ mơ hồ | Giả định | Ghi chú |
+|---|---|---|---|
+| B1 | Thời điểm `night_start` | Ghi ở **tick 0** ngay sau snapshot đầu (trước bước đầu tiên) | Dựng scenario vẫn không phát sự kiện nào khác |
+| B2 | Điểm xuất phát Đêm 2/3 | Đêm 2: (0,0,0). Đêm 3: **(0,0,−30)** vì (0,0,0) nằm trong tháp chuông và dưới tầng 2; hồi sinh cũng ở đây | Hỏi trợ giảng nếu có quy định khác |
+| B3 | "Vách đứng" và dốc | Đi bộ lên được nếu chênh cao ≤ 0.35 m mỗi bước (dốc 0.5 m/m), cao hơn là vách chặn; tháp chuông xử lý như vách cao 14 m | |
+| B4 | Lướt trên không | Giữ nguyên độ cao trong 12 tick (vy = 0); hết lướt thì rơi từ vy = 0 | Không ghi rõ vy sau lướt |
+| B5 | Bục nhảy | Kích hoạt khi chân Mây đứng trên bục (XZ ≤ 1 m, chênh cao ≤ 0.35) ở cuối bước di chuyển; vận tốc phóng hiện trong snapshot của chính tick đó | |
+| B6 | Độ cao Bóng Mực / Gió Lạc | Bay ở mặt đất bên dưới + 1.0 m / + 1.5 m, không bị vách chặn; mặt đất của Bóng Mực trên tháp tính là tầng 2 | Chênh cao khi chạm: chân Mây so với mặt đất dưới Bóng Mực |
+| B7 | Gió Lạc `idle` | Lượn 2 m/s tới một điểm sương ngẫu nhiên (theo seed), tới nơi thì chọn điểm khác. Tỏa Sáng trúng con `idle` không có tác dụng | Ticket chỉ quy định chase/flee |
+| B8 | Gió Lạc biến mất | Rời danh sách `drifters` ở đúng tick hết hạn (cướp: +240; bị Tỏa Sáng thả đồ: +120 kể từ tick đó) | Không giữ trạng thái `removed` trong snapshot |
+| B9 | `player.invuln` trong snapshot | Boolean (đang bất tử hay không) | Các trường khác đều có hậu tố `_s` |
+| B10 | `player_hit` khi rơi | `dropped: 0, lost: <số đom đóm bị mất>` | Đom đóm mất, không rơi ra đất |
+| B11 | Gió | Cơn gió bắt đầu ở tick 1800, 3600… (theo `sim_tick`), hướng `dir_deg` ngẫu nhiên theo seed, cùng quy ước góc với bản đồ; cộng 2 m/s vào vận tốc ngang (cả khi lướt/bay) | |
+| B12 | Bóng Mực sinh cách Mây ≥ 15 m | Áp dụng cho cả 3 Đêm | Ticket chỉ nêu ở Đêm 1 |
+| B13 | Sinh Gió Lạc | Ở một điểm sinh Bóng Mực ngẫu nhiên (theo seed); không cần cách xa Mây | |
+| B14 | Scenario `charms` | `{id, pos?, available?, respawn_ticks? | respawn_s?}`; id mặc định của Đêm thì được bỏ `pos` | |
+| B15 | Scenario `drifters` | `{id?, pos, state?, stolen?, state_ticks_left?}`; `state_ticks_left` của `flee` = tick biến mất | |
