@@ -8,13 +8,11 @@ const near = (a, b, eps = 1e-3) => assert.ok(Math.abs(a - b) <= eps, `${a} ≈ $
 const xzd = (a, b) => Math.hypot(a[0] - b[0], a[2] - b[2]);
 const snaps = (r) => r.lines.filter((l) => l.type === 'snapshot');
 
-test('P2-01 contract v1.1 và các khóa tuning mới', () => {
+test('P2-01 các khóa tuning Ticket-02 (dash) vẫn còn', () => {
   const c = JSON.parse(readFileSync('game.contract.json', 'utf8'));
-  assert.equal(c.contract_version, '1.1');
-  assert.deepEqual(
-    [c.tuning.dash_speed, c.tuning.dash_duration_s, c.tuning.dash_cooldown_s, c.tuning.night2_duration_s, c.tuning.night3_duration_s],
-    [14, 0.2, 1.5, 330, 360],
-  );
+  // [Phase 3 sửa] contract lên 1.2 và Ticket-03 đổi thời lượng Đêm 270/300 → kiểm ở P3-01; ở đây chỉ giữ khóa dash.
+  assert.deepEqual([c.tuning.dash_speed, c.tuning.dash_duration_s, c.tuning.dash_cooldown_s], [14, 0.2, 1.5]);
+  assert.ok('night2_duration_s' in c.tuning && 'night3_duration_s' in c.tuning);
 });
 
 test('P2-02 Lướt: 12 tick × 14 m/s, hồi chiêu 90 tick tính từ lúc bắt đầu, nhấn khi đang hồi bị bỏ qua', () => {
@@ -70,8 +68,9 @@ test('P2-06 lịch sinh Bóng Mực theo Đêm và tốc độ Đêm 3 = 4.5 m/s
   assert.equal(r.snap(60).shades[0].state, 'chase');
 });
 
-test('P2-07 thời lượng Đêm 300/330/360 s, 3 Ngọn Lửa', () => {
-  for (const [night, s] of [[1, 300], [2, 330], [3, 360]]) {
+// [Phase 3 sửa] Ticket-03 [THAY THẾ] thời lượng Đêm 300/330/360 → 240/270/300 s.
+test('P2-07 thời lượng Đêm 240/270/300 s (Ticket-03), 3 Ngọn Lửa', () => {
+  for (const [night, s] of [[1, 240], [2, 270], [3, 300]]) {
     const r = play({ night, ticks: 0 });
     assert.equal(r.snap(0).time_left_s, s);
     assert.equal(r.snap(0).night, night);

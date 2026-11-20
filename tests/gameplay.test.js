@@ -47,9 +47,11 @@ test('R-05 nạp đèn: một lần bấm nạp min(mang, còn thiếu); đủ 1
   });
   assert.deepEqual(r.events().filter((e) => e.tick > 0).slice(0, 2).map((e) => [e.tick, e.name, e.data]), [
     [1, 'deposit', { lantern_id: 'L1', amount: 10, deposited: 10 }],
-    [1, 'lantern_lit', { lantern_id: 'L1' }],
+    // [Phase 3 sửa] v1.2: lantern_lit thêm trường relight.
+    [1, 'lantern_lit', { lantern_id: 'L1', relight: false }],
   ]);
-  assert.equal(r.snap(1).score, 200);
+  // [Phase 3 sửa] Ticket-03 thay công thức điểm: +5/đom đóm (trước +10) → 10×5 + 100.
+  assert.equal(r.snap(1).score, 150);
   assert.equal(r.snap(1).lanterns[0].lit, true);
   assert.equal(r.events('deposit').length, 1, 'giữ nút không nạp lặp lại');
 });
@@ -149,7 +151,9 @@ test('R-13 đèn vừa thắp: Bóng Mực bên trong bị đẩy ra mép trong 
   near(Math.hypot(r.snap(30).shades[0].pos[0], r.snap(30).shades[0].pos[2]), 6);
 });
 
-test('R-14 thắng: thắp đèn cuối → won/all_lit, điểm thưởng thời gian + Ngọn Lửa', () => {
+// [Phase 3 sửa] Ticket-03 [THAY THẾ] "thắng ngay khi tất cả đèn sáng": thắp đủ đèn KHÔNG kết thúc Đêm.
+// Test cũ (won/all_lit ở tick 1 + thưởng thời gian) được thay bằng kiểm tra luật mới; luật thắng mới ở P3-08.
+test('R-14 thắp đèn cuối không còn kết thúc Đêm (luật thắng mới: giữ sáng tới bình minh)', () => {
   const lit = ['L1', 'L2', 'L3', 'L4'].map((id) => ({ id, lit: true }));
   const r = play({
     scenario: { ...quiet, player: { pos: [-23.8, 0, 7.7], carried: 1 }, lanterns: [...lit, { id: 'L5', deposited: 9 }] },
@@ -157,9 +161,9 @@ test('R-14 thắng: thắp đèn cuối → won/all_lit, điểm thưởng thờ
     ticks: 100,
   });
   assert.equal(r.snap(0).score, 0, 'đèn đặt sẵn không được cộng điểm');
-  assert.deepEqual(r.events('game_over')[0], { type: 'event', tick: 1, name: 'game_over', data: { result: 'won', reason: 'all_lit' } });
-  // 1 đom đóm ×10 + đèn 100 + floor(299.983)×2 + 3 Ngọn Lửa ×50
-  assert.deepEqual(r.end, { type: 'end', ticks: 1, state: 'won', score: 10 + 100 + 598 + 150 });
+  assert.equal(r.events('lantern_lit').length, 1);
+  assert.equal(r.events('game_over').length, 0);
+  assert.deepEqual(r.end, { type: 'end', ticks: 100, state: 'playing', score: 5 + 100 });
 });
 
 test('R-15 thua khi hết giờ (dawn)', () => {
