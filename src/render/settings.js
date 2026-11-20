@@ -1,6 +1,6 @@
 // Cài đặt người chơi, lưu giữa các lần mở game (localStorage của Electron/browser).
 const KEY = 'ddl.settings.v1';
-const DEFAULTS = { volume: 0.7, sensitivity: 1.0 };
+const DEFAULTS = { volume: 0.7, sensitivity: 1.0, colorblind: false };
 
 export function loadSettings() {
   try {

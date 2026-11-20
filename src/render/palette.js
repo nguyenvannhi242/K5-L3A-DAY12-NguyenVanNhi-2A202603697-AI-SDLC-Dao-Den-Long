@@ -20,4 +20,7 @@ export const C = {
   drifter: '#8FA3B8',
   danger: '#FF5A5F',
   text: '#F5F1E6',
+  // Ticket-03: bảng màu dễ phân biệt (mù màu)
+  shadeRimCB: '#00B3FF',
+  dangerCB: '#FFFFFF',
 };

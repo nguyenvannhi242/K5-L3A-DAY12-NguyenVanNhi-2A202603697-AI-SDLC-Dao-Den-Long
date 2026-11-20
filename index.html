@@ -13,6 +13,7 @@
       #hud-tl { top: 14px; left: 18px; font-size: 22px; }
       #hud-tc { top: 12px; left: 50%; transform: translateX(-50%); font-size: 30px; font-variant-numeric: tabular-nums; }
       #hud-tc.danger { color: var(--danger); animation: blink 1s steps(2) infinite; }
+      body.cb { --danger: #FFFFFF; }
       @keyframes blink { 50% { opacity: .35; } }
       #hud-tr { top: 14px; right: 18px; text-align: right; line-height: 1.35; }
       #hud-tr .score { color: var(--gold); }
@@ -24,7 +25,9 @@
       #hint { bottom: 70px; left: 50%; transform: translateX(-50%); color: #FFE9B0; font-size: 20px; }
       #sub { bottom: 110px; left: 50%; transform: translateX(-50%); font-size: 20px; background: #0E1430b0; padding: 4px 12px; border-radius: 8px; display: none; }
       #arrow { width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-bottom: 30px solid var(--lit); filter: drop-shadow(0 0 6px var(--lit)); display: none; }
-      .slots { display: flex; gap: 5px; }
+      .slots { display: flex; gap: 5px; align-items: center; }
+      .slot.hidden { display: none; }
+      #carry { margin-left: 8px; font-size: 18px; }
       .slot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #FFE58A66; }
       .slot.on { background: #FFF6C2; box-shadow: 0 0 8px #FFE58A; border-color: #FFE58A; }
       .screen { position: fixed; inset: 0; display: none; place-items: center; background: #0E1430e0; text-align: center; }
@@ -92,6 +95,7 @@
       <h1>Cài đặt</h1>
       <label>Âm lượng <input id="set-volume" type="range" min="0" max="1" step="0.05" /> <b id="set-volume-v"></b></label>
       <label>Độ nhạy chuột <input id="set-sens" type="range" min="0.2" max="3" step="0.1" /> <b id="set-sens-v"></b></label>
+      <label><input id="set-cb" type="checkbox" /> Bảng màu dễ phân biệt</label>
       <button id="btn-settings-back">Xong</button>
     </div></div>
 

@@ -98,8 +98,18 @@ export function makeLantern() {
   core.position.y = 3.4;
   const light = new THREE.PointLight(C.lanternLit, 0, 18);
   light.position.y = 3.4;
-  group.add(post, paper, core, light);
-  group.userData = { paper, core, light };
+  // Vết rách trên giấy (đèn tắt nhận biết không cần màu).
+  const tear = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.6, 0.05), new THREE.MeshBasicMaterial({ color: '#0E1430' }));
+  tear.position.set(0.18, 3.45, 0.54);
+  tear.rotation.z = 0.5;
+  // Thanh dầu phía trên đèn đang sáng.
+  const bar = new THREE.Group();
+  const bg = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.16, 0.06), new THREE.MeshBasicMaterial({ color: '#1B2350' }));
+  const fill = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.16, 0.08), new THREE.MeshBasicMaterial({ color: C.lanternLit }));
+  bar.add(bg, fill);
+  bar.position.y = 4.4;
+  group.add(post, paper, core, light, tear, bar);
+  group.userData = { paper, core, light, tear, bar, fill };
   return group;
 }
 
@@ -125,7 +135,7 @@ export function makeShade() {
   e1.position.set(0.22, 0.15, 0.62);
   e2.position.set(-0.22, 0.15, 0.62);
   g.add(core, rim, e1, e2);
-  g.userData = { core, rim };
+  g.userData = { core, rim, eyeMat };
   return g;
 }
 
